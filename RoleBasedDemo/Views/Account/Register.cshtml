@@ -1,0 +1,212 @@
+﻿@model RegisterViewModel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Add your CSS styles here for beautification */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ced4da; /* Default border color */
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none; /* Initially hide error messages */
+        }
+
+        /* Add red border to invalid input fields */
+        .is-invalid {
+            border-color: red !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Registration</h2>
+        @if (TempData["RegistrationStatus"] != null)
+        {
+            <div id="registrationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="17000">
+                <div class="toast-header">
+                    <strong class="mr-auto">Registration Status</strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    @if ((int)TempData["RegistrationStatus"] == 1)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            Registration successful!
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            Registration failed. Please try again.
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @id = "registrationForm" }))
+        {
+            <div class="form-group">
+                <label for="Username">Username:</label>
+                <input type="text" id="Username" name="Username" class="form-control" asp-for="Username" required autocomplete="off">
+                <div class="invalid-feedback">Username is required.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="FullName">FullName:</label>
+                <input type="text" id="FullName" name="FullName" class="form-control" asp-for="FullName" required autocomplete="off">
+                <div class="invalid-feedback">FullName is required.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="Email">Email Address:</label>
+                <input type="email" id="Email" name="Email" class="form-control" asp-for="Email" required autocomplete="off">
+                <div class="invalid-feedback">Please provide a valid email address.</div>
+            </div>
+            <div class="form-group">
+                <label for="Password">Password:</label>
+                <input type="password" id="Password" name="Password" class="form-control" asp-for="Password" required minlength="7" autocomplete="new-password">
+                <div class="invalid-feedback">Password must be at least 7 characters.</div>
+            </div>
+            <div class="form-group">
+                <label for="ConfirmPassword">Confirm Password:</label>
+                <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" required autocomplete="new-password">
+                <div class="invalid-feedback">Passwords do not match.</div>
+                <span class="error-message" id="password-match-error">Passwords do not match.</span>
+            </div>
+            <button type="submit" id="submitButton" class="btn btn-primary">Register</button>
+        }
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/Home/Index" class="btn btn-secondary">Go to Home</a>
+        </div>
+    </div>
+   
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- JavaScript to show the toast -->
+    <script>
+        $(document).ready(function () {
+            $('#registrationToast').toast('show');
+        });
+    </script>
+    <!-- Bootstrap JS -->
+
+    <script>
+        // Function to validate email format
+        function validateEmail(email) {
+            const pattern = /^[a-zA-Z0-9]+(?:[._+-]?[a-zA-Z0-9]+)*@@[a-zA-Z0-9]+(?:[.-]?[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+            return pattern.test(email);
+        }
+
+        // Function to validate passwords match
+        function validatePasswordsMatch() {
+            const password = document.getElementById("Password").value;
+            const confirmPassword = document.getElementById("ConfirmPassword").value;
+            const passwordMatchError = document.getElementById("password-match-error");
+
+            if (password !== confirmPassword) {
+                passwordMatchError.style.display = "block";
+                document.getElementById("ConfirmPassword").classList.add("is-invalid");
+            } else {
+                passwordMatchError.style.display = "none";
+                document.getElementById("ConfirmPassword").classList.remove("is-invalid");
+            }
+        }
+
+        // Add event listener for password match validation
+        document.getElementById("ConfirmPassword").addEventListener("keyup", validatePasswordsMatch);
+
+        // Function to validate form on submission
+        document.getElementById("registrationForm").addEventListener("submit", function(event) {
+            const username = document.getElementById("Username");
+            const email = document.getElementById("Email");
+            const password = document.getElementById("Password");
+            const confirmPassword = document.getElementById("ConfirmPassword");
+            let isValid = true;
+
+            // Validate username
+            if (!username.value) {
+                username.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                username.classList.remove("is-invalid");
+            }
+
+            // Validate email
+            if (!validateEmail(email.value)) {
+                email.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                email.classList.remove("is-invalid");
+            }
+
+            // Validate password
+            if (!password.value) {
+                password.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                password.classList.remove("is-invalid");
+            }
+
+            // Validate confirm password
+            if (!confirmPassword.value || password.value !== confirmPassword.value) {
+                confirmPassword.classList.add("is-invalid");
+                isValid = false;
+            } else {
+                confirmPassword.classList.remove("is-invalid");
+            }
+
+            // Prevent form submission if not valid
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

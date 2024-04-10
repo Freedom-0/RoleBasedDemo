@@ -1,0 +1,104 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+    
+    <link href="~/custom/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/custom/css/bootstrap.css" rel="stylesheet" />
+  <style>
+    /* Center the login form */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title text-center">Login</h2>
+            <form>
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="txtUserId" class="form-control" id="username" placeholder="Enter your username">
+              </div>
+              <span id="se1"></span>
+              <div class="form-group">
+                 <label for="password">Password</label>
+                 <input type="password" class="form-control" id="txtPassword" placeholder="Enter your password">
+              </div>
+              <span id="se2"></span>
+              <button type="submit" id="js-login-btn" class="btn btn-primary ">Login</button>
+            </form>
+             <div class="registration-prompt">
+                 <p>If you haven't registered yet, please register now!</p>
+                 <a href="@Url.Action("Register", "Account")" class="btn btn-primary">Register</a>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   
+
+ 
+        <script src="~/custom/jquerynew.js"></script>
+        <script src="~/custom/js/bootstrap.min.js"></script>
+        <script src="~/custom/notifications/toastr/toastr.js"></script>
+        <script>
+        $(document).ready(function () {
+            $('body').on('click', '#js-login-btn', function (event) {
+                event.preventDefault();
+
+                var userName = $('#txtUserId').val();
+                var password = $('#txtPassword').val();
+
+                if (userName == '') {
+                   $('#se1').html('<span style="color: red;"><small>User Cannot be empty</small></span>');
+                } else {
+
+                    $('#se1').html('');
+                    if (password == '') {
+                        $('#se2').html('<span style="color: red;"><small>Password must be provided</small></span>');
+                    } else {
+                        // Generate the URL for the AJAX request
+                        var requestUrl = '/Account/CheckCredentials'; // Assuming the controller is named AccountController
+
+                        $.ajax({
+                            url: requestUrl,
+                            data: { userName: userName, password: password },
+                            type: "POST",
+                            success: function (response) {
+                                if (response.result == '1') {
+                                    var returnUrl = response.returnUrl;
+                                    window.location.href = returnUrl ? returnUrl : '/Home/Index'; // Assuming the dashboard URL
+                                } else {
+                                    window.location.href = '/Account/Login'; // Assuming the login URL
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                                // Handle error
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        </script>
+    
+</body>
+</html>
