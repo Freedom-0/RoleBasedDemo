@@ -1,1 +1,159 @@
-﻿
+﻿@{
+    Layout = null;
+}
+
+@model RoleBasedDemo.Models.UserViewModel 
+@*
+<div>
+    
+    <p>User Location:   @Model.Name </p>
+  
+</div> *@
+@{
+    ViewData["Title"] = "Create Customer";
+}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Customer</title>
+  
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+
+ 
+
+    </style>
+
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Create Customer</div>
+    
+                    <div class="card-body">
+                        <form asp-action="CreateCustomer" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="BRANCH" class="control-label">BRANCH:</label>
+                                <input asp-for="BRANCH" class="form-control" value="@Model.BRANCH" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <input asp-for="ROLE" class="form-control" value="@Model.ROLE" readonly hidden  />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="Name" class="form-control" value="@Model.Name" readonly hidden />
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="CustomerID" class="control-label">Customer ID:</label>
+                                <input asp-for="CustomerID" class="form-control" />
+                                <span id="cid" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="CustomerName" class="control-label">Customer Name:</label>
+                                <input asp-for="CustomerName" class="form-control" />
+                                <span id="cn" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Address" class="control-label">Address:</label>
+                                <input asp-for="Address" class="form-control" placeholder="Customer Address" />
+                                <span id="Address" class="text-danger"></span>
+                            </div>
+                          
+
+                            <div class="form-group">
+                                <label asp-for="Mobile" class="control-label">Phone:</label>
+                                <input asp-for="Mobile" class="form-control" placeholder="mob:xxxx xxxx xx" />
+                                <span id="phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label">Email:</label>
+                                <input asp-for="Email" class="form-control" />
+                                <span id="Email" class="text-danger"></span>
+                            </div>
+    
+
+                            <div class="form-group">
+                                <label asp-for="DateOfBirth" class="control-label">Date of Birth:</label>
+                                <input asp-for="DateOfBirth" class="form-control datepicker" autocomplete="off" data-date-format="yyyy-mm-dd" placeholder=" yyyy-mm-dd" />
+                                <span id="DateOfBirth" class="text-danger"></span>
+                            </div>
+    
+                            <div class="form-group">
+                                <label asp-for="AccountType" class="control-label">Account Type:</label>
+                                <select asp-for="AccountType" class="form-control">
+                                    <option value="">-- Select Account Type --</option>
+                                    @foreach (var value in Enum.GetValues(typeof(AccountType)))
+                                    {
+                                        
+                                        <option value="@value">@value</option>
+                                    } 
+                                </select>
+
+
+                                <span id="AccountType" class="text-danger"></span>
+                            </div>
+                          
+
+
+                            <div class="form-group">
+                                <label asp-for="AccountNo" class="control-label">Account Number:</label>
+                                <input asp-for="AccountNo" class="form-control" placeholder="14 digits number"/>
+                                <span id="accountno" class="text-danger"></span>
+                            </div>
+    
+                            <div class="form-group mt-2">
+                                <button type="submit" class="btn btn-primary">Create</button>
+                                <a id="CreateCustomer" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+
+
+    <script>
+        $(document).ready(function () {
+            // $('.datepicker').datepicker({
+            //     format: 'yyyy-mm-dd', // Set the desired date format
+            //     autoclose: true,
+            //     todayHighlight: true
+            // });
+
+
+            // Get the selected account type from the model
+          
+
+            // Prepend an empty option
+            $('#accountTypeSelect').prepend('<option value=""></option>');
+
+           
+           
+        });
+    </script>
+
+
+    <script>
+      
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,344 @@
+﻿@{
+    //Layout = null;
+    var role = @Model.ROLE;
+}
+@model RoleBasedDemo.Models.UserViewModel
+
+
+
+
+@if (role == "Maker")
+{
+    <div class="container">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="mb-4">DO TRANSCTION</h2>
+                <form id="transactionForm" asp-action="TransctionProceed" method="post">
+                    <div class="form-group">
+                        <label asp-for="BRANCH" class="control-label">BRANCH:</label>
+                        <input asp-for="BRANCH" class="form-control" value="@Model.BRANCH" readonly />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userNameDropdown">please select customer to proceed transction</label>
+                        <br />
+                        <label for="userNameDropdown">Customer:</label>
+                        <select asp-for="USER" class="form-control" id="userNameDropdown" asp-items="@(new SelectList(Model.CustomerList, "Value", "Text"))">
+                            <option value="">-- Select User --</option>
+                        </select>
+                        <span id="userNameError" class="error-message" style="display:none;">Please select a user.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <input asp-for="ROLE" class="form-control" value="@Model.ROLE" readonly  />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="Name" class="form-control" value="@Model.Name" readonly  />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="Data1" class="form-control" value="@Model.Data1" readonly  />
+                    </div>
+                    <br>
+
+                    <div class="form-group" id="accountDetails" style="display: none;">
+                        <label for="accountNo">Account Number:</label>
+                        <input asp-for="AccountNo" class="form-control" id="accountNo" readonly>
+                       
+                        <label for="customerPhone">Customer Phone:</label>
+                        <input asp-for="Mobile" class="form-control" id="customerPhone" readonly>
+
+                        <label for="customerName">Customer Name:</label>
+                        <input asp-for="CustomerName" class="form-control" id="customerName" readonly>
+
+                        <div class="form-group">
+                            <label asp-for="Amt" class="control-label">Amount:</label>
+                            <input asp-for="Amt" class="form-control" id="amountInput" placeholder="Transction Amount" />
+                        </div>
+                        <div class="mt-2"> </div>
+                        <div class="form-group mt-2">
+                            <button type="submit" class="btn btn-primary">DO TRANSCTION</button>
+                            <a id="DoTransction" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+
+               
+            </div>
+        </div>
+        <br />
+        <div class="mt-2">
+
+        </div>
+        <div>
+            <p>Transction Data</p>
+
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    
+    <script>
+
+        $(document).ready(function () {
+            //make amt zero initial
+            $('#amountInput').val('');
+            // Handle change event of dropdown
+            $('#userNameDropdown').change(function () {
+                var selectedUser = $(this).val();
+                if (selectedUser !== '') {
+                    // Make AJAX request to fetch account details
+                    $.ajax({
+                        url: '/user/GetAccountDetails',
+                        type: 'GET',
+                        data: { customerId: selectedUser },
+                        success: function (data) {
+                            if (data != null) {
+
+                            }
+                            // Populate the fields with retrieved data
+                            $('#accountNo').val(data[0].account);
+                            $('#customerPhone').val(data[0].phone);
+
+                            $('#accountNo').val(data[0].ACCOUNT);
+                            $('#customerName').val(data[0].NAME);
+                            $('#customerPhone').val(data[0].PHONE);
+                            // Show the account details section
+                            $('#accountDetails').show();
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log('Error:', errorThrown);
+                        }
+                    });
+                } else {
+                    // Hide the account details section if no user is selected
+                    $('#accountDetails').hide();
+                }
+            });
+        });
+    </script>
+
+
+}
+else if (role == "Checker")
+{
+
+ 
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transaction Table</title>
+        <style>
+            <!-- Include Bootstrap CSS -->
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" >
+            <!-- Include select2 CSS -->
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" >
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" >
+
+
+            #transactionTable {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px; /* Add space below the table */
+            }
+
+            #transactionTable th, #transactionTable td {
+                padding: 8px;
+                border: 1px solid #ddd; /* Add borders to table cells */
+                text-align: left;
+            }
+
+            #transactionTable th {
+                background-color: #f2f2f2; /* Light gray background for table header */
+            }
+
+            #transactionTable tbody tr:nth-child(even) {
+                background-color: #f9f9f9; /* Alternate row background color */
+            }
+
+            /* Add some space around the buttons */
+            #transactionTable .btnReject,
+            #transactionTable .btnAccept {
+                margin-right: 5px;
+            }
+
+            #transactionTable {
+                width: 80%; /* Adjust the width as needed */
+                margin: 20px auto; /* Center the table horizontally and provide space at the top */
+                border-collapse: collapse;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <p>UserName:  <input asp-for="Approver" class="form-control" value="@Model.Name" readonly /></p>
+        <table id="transactionTable">
+            <thead id="nodata">
+                <tr>
+                    <th>TID</th>
+                    <th>Amount</th>
+                    <th>AccountHolderNAme</th>
+                    <th>AccountNo</th>
+                    <th>PhoneNO</th>
+                     <th>TxnDoneBy</th>
+                     <th>TStatus</th>
+                     <th>TxnBranch</th>
+                     <th>TDate</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <span id="warning" style="color: red; display: none;">There is no pending data... </span>
+            <tbody id="transactionBody">
+                <!-- Transaction data will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Include jQuery -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+
+            function fetchTransactions() {
+                $.ajax({
+                    url: '/user/DataTransactions',
+                    method: 'GET',
+                    success: function (data) {
+                      //  $('#transactionBody').empty();
+
+                        if (data.length === 0) {
+                            // No data returned, hide thead and show warning message
+                            $('#nodata').hide();
+                            $('#warning').show();
+                        } else {
+                            $('#nodata').show();
+                            $('#warning').hide();
+                            $('#transactionBody').empty();
+                            // Iterate through numerical indexes
+                            for (var i = 0; i < data.length; i++) {
+                                // Access properties of each object within the array
+                                var transaction = data[i];
+                                var dateWithoutTime = new Date(transaction.TDate).toLocaleDateString('en-US');
+                                var row = '<tr>' +
+                                    '<td>' + transaction.TID + '</td>' +
+                                    '<td>' + transaction.TAmount + '</td>' +
+                                    '<td>' + transaction.TUserName + '</td>' +
+                                    '<td>' + transaction.TAccountNo + '</td>' +
+                                    '<td>' + transaction.TUserPhone + '</td>' +
+                                    '<td>' + transaction.TDoneBy + '</td>' +
+                                    '<td>' + transaction.TStatus + '</td>' +
+                                    '<td>' + transaction.TBranch + '</td>' +
+                                    '<td>' + dateWithoutTime + '</td>' +
+                                    // '<td>' +
+                                    // '<button class="btnReject" data-tid="' + transaction.TID + '">Reject</button>' +
+                                    // '<button class="btnAccept" data-tid="' + transaction.TID + '">Accept</button>' +
+                                    // '</td>' +
+
+                                    '<td>' +
+                                    '<button class="btnReject btnAction" ' +
+                                    'data-action="Reject" ' +
+                                    'data-tid="' + transaction.TID + '" ' +
+                                    'data-tusername="' + transaction.TUserName + '" ' +
+                                    'data-taccountno="' + transaction.TAccountNo + '" ' +
+                                    'data-approver="' + '@Model.Name' + '">Reject</button>' +
+                                    '<button class="btnAccept btnAction" ' +
+                                    'data-action="Accept" ' +
+                                    'data-tid="' + transaction.TID + '" ' +
+                                    'data-tusername="' + transaction.TUserName + '" ' +
+                                    'data-taccountno="' + transaction.TAccountNo + '" ' +
+                                    'data-approver="' + '@Model.Name' + '">Accept</button>' +
+                                    '</td>'
+
+
+                                    '</tr>';
+                                $('#transactionBody').append(row);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching transactions:', error);
+                    }
+                });
+            }
+
+            // Call fetchTransactions function when the document is ready
+          
+
+            $(document).ready(function () {
+                fetchTransactions();
+
+                // $(document).on('click', '.btnAction', function () {
+                //     var action = $(this).data('action');
+                //     var data = {
+                //         tid: $(this).data('tid'),
+                //         tusername: $(this).data('tusername'),
+                //         taccountno: $(this).data('taccountno'),
+                //         approver: $(this).data('approver')
+                //     };
+                //     handleTransaction(action, data);
+                // });
+
+                $(document).on('click', '.btnAction', function () {
+                    var action = $(this).data('action'); // Get the action from data attribute
+                    var data = {
+                        tid: $(this).data('tid'),
+                        tusername: $(this).data('tusername'),
+                        taccountno: $(this).data('taccountno'),
+                        approver: $(this).data('approver')
+                    };
+                    handleTransaction(action, data); // Pass action along with other data to handleTransaction function
+                });
+            });
+
+            // Function to handle transaction action (accept or reject) via AJAX
+            function handleTransaction(action, data) {
+                $.ajax({
+                    url: '/user/HandleTransaction',
+                    method: 'POST',
+                    data: {
+                        action: action,
+                        tid: data.tid,
+                        tusername: data.tusername,
+                        taccountno: data.taccountno,
+                        approver: data.approver
+                    },
+                    success: function (response) {
+                        console.log('Transaction ' + action + 'ed successfully');
+                        // Handle success response if needed
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error ' + action + 'ing transaction:', error);
+                        // Handle error response if needed
+                    }
+                });
+            }
+
+            // Event listener for handling transaction action
+         
+
+
+
+
+        </script>
+    </body>
+    </html>
+
+
+    
+
+}
+
+
+
+    
+
+
+
+
+
+
+
+
+

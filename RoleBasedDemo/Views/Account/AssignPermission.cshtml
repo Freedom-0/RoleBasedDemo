@@ -1,0 +1,381 @@
+﻿@{
+    Layout = null;
+}
+
+@model RoleBasedDemo.Models.UserViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssignPermission</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+           
+        }
+
+        .form-container {
+            max-width: auto;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .margin-bottom-20 {
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="mb-4">Control User</h2>
+
+                <div class="form-group">
+                    <label for="userNameDropdown">User Name:</label>
+                    <select asp-for="EmployeeName" class="form-control" id="userNameDropdown" asp-items="@(new SelectList(Model.EmployeeList, "Value", "Text"))">
+                        <option value="">-- Select User --</option>
+                    </select>
+                    <span id="userNameError" class="error-message" style="display:none;">Please select a user.</span>
+                </div>
+                <br>
+
+                <div class="form-group">
+                    <label>Roles:</label><br>
+                    <!-- Role radio buttons -->
+                    @foreach (var role in Model.RoleList)
+                    {
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="@role.Value" name="selectedRole" value="@role.Value">
+                            <label class="form-check-label" for="@role.Value">@role.Text</label>
+                        </div>
+                    }
+                    <span id="roleError" class="error-message" style="display:none;">Please select a role.</span>
+                </div>
+                <br>
+
+                <div class="form-group">
+                    <label>Branch:</label><br>
+                    <!-- Branch radio buttons -->
+                    @foreach (var branch in Model.BranchList)
+                    {
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="@branch.Value" name="selectedBranch" value="@branch.Value">
+                            <label class="form-check-label" for="@branch.Value">@branch.Text</label>
+                        </div>
+                    }
+                    <span id="branchError" class="error-message" style="display:none;">Please select a branch.</span>
+                </div>
+                <br>
+
+                <h2>Menu Items</h2>
+                <!-- Menu checkboxes -->
+                @foreach (var menu in Model.PageMenuListzz)
+                {
+                    <div>
+                        <!-- Render the menu icon -->
+
+                        <label>
+                            <input type="checkbox" name="menu" value="@menu.MenuId" />
+                            <i class="@menu.MenuIcon"></i>
+                            @menu.MenuName
+                        </label>
+                        @if (menu.HasChild)
+                        {
+                            <ul>
+                                @foreach (var submenu in Model.PageSubMenuListzz.Where(sub => sub.MenuId == menu.MenuId))
+                                {
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" name="submenu" value="@submenu.SubMenuId" />
+                                            @submenu.SubMenuName
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
+                <span id="menuError" class="error-message" style="display:none;">Please select at least one menu item.</span>
+                <br>
+
+                <button id="updateButton" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/brands.min.js" integrity="sha512-ojD9xRtdGdJLd9K/vMhV6GyO8G9wVrofDXmX4AjrKPctyKTLaVVwuAJhZanincPnSprZv1Nc3iDpxIi/6+Xv7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Include select2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Update button click event
+            $('#updateButton').click(function () {
+                var userId = $('#userNameDropdown').val();
+                var roles = $('input[name="selectedRole"]:checked').val();
+                var branchId = $('input[name="selectedBranch"]:checked').val();
+                var menus = [];
+                 //var submenus = [];
+              
+                $('input[name="menu"]:checked').each(function () {
+                    menus.push($(this).val());
+                });
+                // $('input[name="submenu"]:checked').each(function () {
+                //     submenus.push($(this).val());
+                // // });
+                // $('input[name="menu"]:checked').each(function () {
+                //     // Get the menu ID
+                //     var menuId = $(this).val();
+                //     // Initialize an object to represent the menu
+                //     var menuObject = {
+                //         menuId: menuId,
+                //         submenuId: [] // Initialize an array for submenu IDs
+                //     };
+                //     // Check if the menu has submenus
+                //     if ($(this).siblings('ul').length > 0) {
+                //         // Loop through checked submenu checkboxes
+                //         $(this).siblings('ul').find('input[name="submenu"]:checked').each(function () {
+                //             // Get the submenu ID
+                //             var submenuId = $(this).val();
+                //             // Push the submenu ID to the submenu array
+                //             menuObject.submenuId.push(submenuId);
+                //         });
+                //     }
+                //     // Push the menu object to the menus array
+                //     menus.push(menuObject);
+                // // });
+                // $('input[name="menu"]:checked').each(function () {
+                //     // Get the menu ID
+                //     var menuId = $(this).val();
+                //     // Check if the menu has submenus
+                //     if ($(this).siblings('ul').length > 0) {
+                //         // Loop through checked submenu checkboxes
+                //         $(this).siblings('ul').find('input[name="submenu"]:checked').each(function () {
+                //             // Get the submenu ID
+                //             var submenuId = $(this).val();
+                //             // Concatenate the menu and submenu IDs and push to the menus array
+                //             menus.push(menuId + ',' + submenuId);
+                //         });
+                //     } else {
+                //         // If the menu has no submenus, push the menu ID with '0' as the submenu ID
+                //         menus.push(menuId + ',0');
+                //     }
+                // });
+
+                // Check if all fields are selected
+                if (!userId) {
+                    $('#userNameError').show();
+                } else {
+                    $('#userNameError').hide();
+                }
+
+                if (!roles) {
+                    $('#roleError').show();
+                } else {
+                    $('#roleError').hide();
+                }
+
+                if (!branchId) {
+                    $('#branchError').show();
+                } else {
+                    $('#branchError').hide();
+                }
+
+                if (menus.length === 0) {
+                    $('#menuError').show();
+                } else {
+                    $('#menuError').hide();
+                }
+
+                // Get the selected menus and submenus
+                var selectedMenusAndSubmenus = [];
+
+                // Loop through each checked menu checkbox
+                $('input[name="menu"]:checked').each(function () {
+                    var menuId = $(this).val(); // Get the menu ID
+                    var submenuIds = []; // Initialize array to store submenu IDs
+
+                    // Check if the menu has submenus
+                    var $submenus = $(this).closest('div').find('input[name="submenu"]:checked');
+                    if ($submenus.length > 0) {
+                        // Get the IDs of all selected submenus
+                        $submenus.each(function () {
+                            submenuIds.push($(this).val());
+                        });
+                    } else {
+                        // If no submenus are selected, add 0 as the submenu ID
+                        submenuIds.push(0);
+                    }
+
+                    // Push menu ID and submenu IDs to the selectedMenusAndSubmenus array
+                    submenuIds.forEach(function (submenuId) {
+                        selectedMenusAndSubmenus.push(menuId + ',' + submenuId);
+                    });
+                });
+                // If all fields are selected, proceed with the update
+                if (userId && roles && branchId && selectedMenusAndSubmenus.length > 0) {
+                    // Perform AJAX call to update permissions
+                    $.ajax({
+                        url: '/account/UpdateUserPermissions',
+                        type: 'POST',
+                        data: {
+                            userId: userId,
+                            roleId: roles,
+                            branchId: branchId,
+                            menusubmenu: selectedMenusAndSubmenus
+                        },
+                        success: function (data) {
+                            // Handle success
+                           // console.log('Permissions updated successfully.');
+                            location.reload();
+                        },
+                        error: function () {
+                            // Handle error
+                           // console.log('Error occurred while updating permissions.');
+                        }
+                    });
+                }
+            });
+
+
+            // Function to fetch user data
+            function getUserData(userId) {
+                $.ajax({
+                    url: '/account/GetUserData',
+                    type: 'GET',
+                    data: { userId: userId },
+                    success: function (data) {
+                        var selectedRoleId = data.roleID;
+                        var selectedBranchId = data.branchID
+
+                        // Clear existing roles
+                        $('.form-check-input[name="selectedRole"]').prop('checked', false);
+                        $('.form-check-input[name="selectedBranch"]').prop('checked', false);
+
+                        // <input class="form-check-input" type="radio" id="2" name="selectedBranch" value="2">
+                        // Check the radio button corresponding to the selected role
+                        $('input[name="selectedRole"][value="' + selectedRoleId + '"]').prop('checked', true);
+                        $('input[name="selectedBranch"][value="' + selectedBranchId + '"]').prop('checked', true);
+
+                        // Similarly, populate submenus and other UI elements
+
+                         var menuAccessArray = data.menuAccess;
+                       
+                        // // Iterate over each menu-submenu pair
+                        // menuAccessArray.forEach(function (pair) {
+                        //     var parts = pair.split(',');
+                        //     var menuId = parts[0];
+                        //     var submenuId = parts[1];
+
+                        //     // Check the menu checkbox
+                        //     $('input[name="menu"][value="' + menuId + '"]').prop('checked', true);
+
+                        //     // If submenu ID is not 0, check the submenu checkbox
+                        //     if (submenuId !== "0") {
+                        //         $('input[name="submenu"][value="' + submenuId + '"]').prop('checked', true);
+                        //     }
+                        // });var menuAccessArray = data.menuAccess;
+
+                        // Iterate over each menu-submenu pair
+                        // menuAccessArray.forEach(function (pair) {
+                        //     var parts = pair.split(',');
+                        //     var menuId = parts[0];
+                        //     var submenuId = parts[1];
+
+                        //     // Check the menu checkbox
+                        //     $('input[name="menu"][value="' + menuId + '"]').prop('checked', true);
+
+                        //     // If submenu ID is not 0, check the submenu checkbox
+                        //     if (submenuId !== "0") {
+                        //         // Check if the submenu exists for the given menu ID
+                        //         if ($('input[name="submenu"][value="' + submenuId + '"]').length > 0) {
+                        //             $('input[name="submenu"][value="' + submenuId + '"]').prop('checked', true);
+                        //         }
+                        //     }
+                        // });
+                        $('input[name="menu"]').prop('checked', false);
+                        $('input[name="submenu"]').prop('checked', false);
+
+                        // Iterate over each menu-submenu pair
+                        menuAccessArray.forEach(function (pair) {
+                            var parts = pair.split(',');
+                            var menuId = parts[0];
+                            var submenuId = parts[1];
+
+                            // Check the menu checkbox
+                            $('input[name="menu"][value="' + menuId + '"]').prop('checked', true);
+
+                            // If the submenu ID is not 0, check the corresponding submenu checkbox
+                            if (submenuId !== "0") {
+                                // Check if the submenu belongs to the current menu
+                                var submenuCheckbox = $('input[name="submenu"][value="' + submenuId + '"]').filter(function () {
+                                    return $(this).closest('div').find('input[name="menu"]').val() === menuId;
+                                });
+                                if (submenuCheckbox.length > 0) {
+                                    submenuCheckbox.prop('checked', true);
+                                }
+                            }
+                        });
+
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.log('Error occurred while fetching user data:', error);
+                    }
+                });
+            }
+
+            // Example: When user selects a user from dropdown
+            $('#userNameDropdown').change(function () {
+                var selectedUserId = $(this).val();
+                if (selectedUserId) {
+                    // Fetch user data for the selected user
+                    getUserData(selectedUserId);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+

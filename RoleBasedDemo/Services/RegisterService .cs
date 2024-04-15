@@ -6,98 +6,26 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
-
-//namespace RoleBasedDemo.Services
-//{
-//    public interface IRegisterService
-//    {
-
-//        DataTable Registration(LoginViewModel model);
-
-//    }
-
-//    public class RegisterService : IRegisterService
-//    {
-//        public ConnectionStrings _connectionStrings;
-//        private SqlConnection Con { get; set; }
-//        private SqlCommand Cmd { get; set; }
-
-//        public RegisterService(IOptions<ConnectionStrings> options)
-//        {
-//            _connectionStrings = options.Value;
-//        }
-//        #region LOGIN
-//        public DataTable Registration(LoginViewModel model)
-//        {
-//            try
-//            {
-//                using (SqlConnection con = new SqlConnection(_connectionStrings.SQL_Connection))
-//                {
-//                    con.Open();
-//                    using (SqlCommand cmd = new SqlCommand("CheckUserCredentials", con))
-//                    {
-//                        cmd.CommandType = CommandType.StoredProcedure;
-//                        cmd.Parameters.AddWithValue("@ACTIVITY", model.Activity);
-//                        cmd.Parameters.AddWithValue("@p_username", model.UserName);
-//                        cmd.Parameters.AddWithValue("@p_password", model.PassWord);
-
-
-//                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
-//                        {
-//                            DataTable dt = new DataTable();
-//                            try
-//                            {
-//                                da.Fill(dt);
-//                            }
-//                            catch (Exception ex)
-//                            {
-//                                // Log the exception for debugging purposes
-//                                Console.WriteLine("Error during data retrieval: " + ex.Message);
-//                                // Re-throw the exception to propagate it further
-//                                throw;
-//                            }
-
-//                            return dt;
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                // Handle the exception
-//                Console.WriteLine("Error: " + ex.Message);
-//                throw;
-//            }
-//        }
-
-//        #endregion 
-
-
-//    }
-//}
-
-
-// IRegisterService.cs
-
-
-
-
 namespace RoleBasedDemo.Services { 
 
     public interface IRegisterService
     {
            bool RegisterUser(RegisterViewModel model);
+           DataTable GetUserDetails(UserViewModel model,string activity, string storedProcedureName/*, Dictionary<string, object> parameters*/);
+
     }
 
     public class RegisterService : IRegisterService
     {
         private readonly ConnectionStrings _connectionStrings;
-
+        
         public RegisterService(IOptions<ConnectionStrings> options)
         {
             _connectionStrings = options.Value;
         }
 
+
+        #region registeruser
         public bool RegisterUser(RegisterViewModel model)
         {
             try
@@ -124,23 +52,69 @@ namespace RoleBasedDemo.Services {
                 {
                     // Log the exception for debugging purposes
                     Console.WriteLine("Error during data retrieval: " + ex.Message);
-                    // Re-throw the exception to propagate it further
+                  
                     throw;
                 }
 
                 return true;
 
-                //int rowsAffected = cmd.ExecuteNonQuery();
-
-                //return rowsAffected > 0;
             }
             catch (Exception ex)
             {
-                // Log the exception for debugging purposes
+               
                 Console.WriteLine("Error during user registration: " + ex.Message);
-                // Optionally, you can throw the exception to propagate it further
+               
                 throw;
             }
         }
+        #endregion
+
+        #region reusable datatable
+        public DataTable GetUserDetails(UserViewModel model, string activity, string storedProcedureName/*, Dictionary<string, object> parameters*/)
+        {
+            try
+            {
+                using SqlConnection con = new(_connectionStrings.SQL_Connection);
+                con.Open();
+                using SqlCommand cmd = new(storedProcedureName, con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ACTIVITY", activity);
+                cmd.Parameters.AddWithValue("@user", model.Name);
+                cmd.Parameters.AddWithValue("@userpass", model.Code);
+
+                // Add additional parameters if provided
+                //if (parameters != null)
+                //{
+                //    foreach (var parameter in parameters)
+                //    {
+                //        cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                //    }
+                //}
+
+                using SqlDataAdapter da = new(cmd);
+                DataTable dt = new();
+                try
+                {
+                    da.Fill(dt);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception for debugging purposes
+                    Console.WriteLine("Error during data retrieval: " + ex.Message);
+                    // Re-throw the exception to propagate it further
+                    throw;
+                }
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception
+                Console.WriteLine("Error: " + ex.Message);
+                throw;
+            }
+        }
+
+        #endregion
     }
 }

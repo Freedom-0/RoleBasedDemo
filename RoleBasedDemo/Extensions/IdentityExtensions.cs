@@ -14,6 +14,12 @@ namespace RoleBasedDemo.Extensions
             Claim? claim = claimsIdentity?.FindFirst(Common.USERNAME);
             return claim != null;
         }
+        public static string GetUserID(this IIdentity identity)
+        {
+            ClaimsIdentity? claimsIdentity = identity as ClaimsIdentity;
+            Claim? claim = claimsIdentity?.FindFirst(Common.USERID);
+            return claim?.Value;
+        }
 
         public static string GetUserName(this IIdentity identity)
         {
@@ -25,6 +31,20 @@ namespace RoleBasedDemo.Extensions
         {
             ClaimsIdentity? claimsIdentity = identity as ClaimsIdentity;
             Claim? claim = claimsIdentity?.FindFirst(Common.USERMAIL);
+            return claim?.Value;
+        }
+
+        public static string GetUserROle(this IIdentity identity)
+        {
+            ClaimsIdentity? claimsIdentity = identity as ClaimsIdentity;
+            Claim? claim = claimsIdentity?.FindFirst(Common.USERROLE);
+            return claim?.Value;
+        }
+
+        public static string GetUserLocation(this IIdentity identity)
+        {
+            ClaimsIdentity? claimsIdentity = identity as ClaimsIdentity;
+            Claim? claim = claimsIdentity?.FindFirst(Common.USERLOCATION);
             return claim?.Value;
         }
 

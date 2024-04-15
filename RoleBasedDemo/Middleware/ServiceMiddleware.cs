@@ -1,6 +1,8 @@
 ﻿using RoleBasedDemo.Helpers;
 using RoleBasedDemo.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+//using RoleBasedDemo.Authorization;
 
 
 namespace RoleBasedDemo.Middleware
@@ -12,6 +14,9 @@ namespace RoleBasedDemo.Middleware
 
             services.AddScoped<IHomeService, HomeService>();
             services.AddScoped<IRegisterService, RegisterService>();
+            services.AddScoped<IUserInfoService, UserInfoService>();
+
+          
 
             // InactivityRedirec
             // services.AddMiddleware<CookieExpirationMiddleware>();

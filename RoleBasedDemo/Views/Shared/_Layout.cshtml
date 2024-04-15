@@ -31,6 +31,18 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="dotransction">dotransction</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="createcustomer">AddCustomer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="assignpermission">Admin</a>
+                        </li>
+
+                      
+
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
