@@ -315,5 +315,27 @@ namespace RoleBasedDemo.Controllers
         }
 
         #endregion
+
+
+        #region username and mail exist
+
+        [HttpPost]
+        public IActionResult CheckUsername(string username)
+        {
+
+            bool exists = _userInfoService.CheckUsernameExistence(username);
+            return Json(new { exists });
+        }
+
+        [HttpPost]
+        public IActionResult CheckEmail(string email)
+        {
+            bool exists = _userInfoService.CheckEmailExistence(email); 
+            return Json(new { exists });
+        }
+
+
+
+        #endregion
     }
 }

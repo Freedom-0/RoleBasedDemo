@@ -20,7 +20,8 @@ namespace RoleBasedDemo.Controllers
 
         //[Authorize(Roles = "Maker")]
         //[Authorize]
-        [Authorize(Policy = "RoleAndLocationPolicy")]
+        //[Authorize(Policy = "RoleAndLocationPolicy")]
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();

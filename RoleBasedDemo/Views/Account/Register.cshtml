@@ -93,6 +93,7 @@
                 <label for="Username">Username:</label>
                 <input type="text" id="Username" name="Username" class="form-control" asp-for="Username" required autocomplete="off">
                 <div class="invalid-feedback">Username is required.</div>
+                <span id="usernameError" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -105,15 +106,16 @@
                 <label for="Email">Email Address:</label>
                 <input type="email" id="Email" name="Email" class="form-control" asp-for="Email" required autocomplete="off">
                 <div class="invalid-feedback">Please provide a valid email address.</div>
+                <span id="emailError" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Password">Password:</label>
-                <input type="password" id="Password" name="Password" class="form-control" asp-for="Password" required minlength="7" autocomplete="new-password">
+                <label>Password:</label>
+                <input type="password" id="Password test" name="Password" class="form-control" asp-for="Password" required minlength="7" autocomplete="new-password">
                 <div class="invalid-feedback">Password must be at least 7 characters.</div>
             </div>
             <div class="form-group">
-                <label for="ConfirmPassword">Confirm Password:</label>
-                <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" required autocomplete="new-password">
+                <label>Confirm Password:</label>
+                <input type="password" id="ConfirmPassword test" name="ConfirmPassword" class="form-control" required autocomplete="new-password">
                 <div class="invalid-feedback">Passwords do not match.</div>
                 <span class="error-message" id="password-match-error">Passwords do not match.</span>
             </div>
@@ -123,16 +125,23 @@
             <a href="/Home/Index" class="btn btn-secondary">Go to Home</a>
         </div>
     </div>
-   
 
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/brands.min.js" integrity="sha512-ojD9xRtdGdJLd9K/vMhV6GyO8G9wVrofDXmX4AjrKPctyKTLaVVwuAJhZanincPnSprZv1Nc3iDpxIi/6+Xv7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Include Bootstrap JS -->
+    <!-- Include select2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- JavaScript to show the toast -->
     <script>
         $(document).ready(function () {
             $('#registrationToast').toast('show');
+            $('#test').value("");
         });
     </script>
     <!-- Bootstrap JS -->
@@ -207,6 +216,86 @@
                 event.preventDefault();
             }
         });
+
+
+
+        //test
+        // $('#Username').on('blur', function () {
+        //     var username = $(this).val();
+        //     $.ajax({
+        //         url: '/Account/CheckUsername',
+        //         method: 'POST',
+        //         data: { username: username },
+        //         success: function (response) {
+        //             if (response.exists) {
+        //                 $('#usernameError').text('Username already exists. Please choose another.');
+        //             } else {
+        //                 $('#usernameError').text('');
+        //             }
+        //         }
+        //     });
+        // });
+
+        // $('#Email').on('blur', function () {
+        //     var email = $(this).val();
+        //     $.ajax({
+        //         url: '/Account/CheckEmail',
+        //         method: 'POST',
+        //         data: { email: email },
+        //         success: function (response) {
+        //             if (response.exists) {
+        //                 $('#emailError').text('Email already exists. Please use a different email address.');
+        //             } else {
+        //                 $('#emailError').text('');
+        //             }
+        //         }
+        //     });
+        // });
+
+       
+
     </script>
+
+    <!-- HTML form and input fields omitted for brevity -->
+
+    <script>
+        // JavaScript code for AJAX requests
+        document.getElementById('Username').addEventListener('blur', function () {
+            var username = this.value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/Account/CheckUsername', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.exists) {
+                        document.getElementById('usernameError').textContent = 'Username already exists. Please choose another.';
+                    } else {
+                        document.getElementById('usernameError').textContent = '';
+                    }
+                }
+            };
+            xhr.send('username=' + encodeURIComponent(username));
+        });
+
+        document.getElementById('Email').addEventListener('blur', function () {
+            var email = this.value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/Account/CheckEmail', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.exists) {
+                        document.getElementById('emailError').textContent = 'Email already exists. Please use a different email address.';
+                    } else {
+                        document.getElementById('emailError').textContent = '';
+                    }
+                }
+            };
+            xhr.send('email=' + encodeURIComponent(email));
+        });
+    </script>
+
 </body>
 </html>

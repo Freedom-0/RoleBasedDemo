@@ -22,6 +22,9 @@ namespace RoleBasedDemo.Services {
 
         Task<bool> CheckUserAccessAsync(IEnumerable<string> roles, IEnumerable<string> locations, string requestUrl);
 
+        bool CheckUsernameExistence(string username);
+        bool CheckEmailExistence(string email);
+
     }
 
     public class UserInfoService : IUserInfoService
@@ -215,6 +218,61 @@ namespace RoleBasedDemo.Services {
                 throw;
             }
         }
+
+        #endregion
+
+
+        #region check username and mail
+
+        public bool CheckUsernameExistence(string username)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionStrings.SQL_Connection))
+                {
+                    con.Open();
+                    string query = "SELECT COUNT(*) FROM UserDetails WHERE UserName = @Username";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@Username", username);
+                        object result = cmd.ExecuteScalar();
+                        int count = Convert.ToInt32(result ?? 0); // If result is null, default to 0
+                        return count > 0;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error checking username existence: " + ex.Message);
+                throw;
+            }
+        }
+
+
+        public bool CheckEmailExistence(string email)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionStrings.SQL_Connection))
+                {
+                    con.Open();
+                    string query = "SELECT COUNT(*) FROM UserDetails WHERE Email = @Email";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        int count = (int)cmd.ExecuteScalar();
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error checking email existence: " + ex.Message);
+                throw;
+            }
+        }
+
 
         #endregion
     }
