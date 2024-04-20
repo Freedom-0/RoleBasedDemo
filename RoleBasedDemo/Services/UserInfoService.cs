@@ -223,24 +223,22 @@ namespace RoleBasedDemo.Services {
 
 
         #region check username and mail
-
         public bool CheckUsernameExistence(string username)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings.SQL_Connection))
+                if (string.IsNullOrEmpty(username)) // Check if username is null or empty
                 {
-                    con.Open();
-                    string query = "SELECT COUNT(*) FROM UserDetails WHERE UserName = @Username";
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@Username", username);
-                        object result = cmd.ExecuteScalar();
-                        int count = Convert.ToInt32(result ?? 0); // If result is null, default to 0
-                        return count > 0;
-                    }
+                    return false; // Return false if username is empty
                 }
 
+                using SqlConnection con = new(_connectionStrings.SQL_Connection);
+                con.Open();
+                string query = "SELECT CASE WHEN EXISTS (SELECT 1 FROM UserDetails WHERE UserName = @Username) THEN 1 ELSE 0 END";
+                using SqlCommand cmd = new(query, con);
+                cmd.Parameters.AddWithValue("@Username", username);
+                int result = (int)cmd.ExecuteScalar();
+                return result == 1;
             }
             catch (Exception ex)
             {
@@ -250,21 +248,25 @@ namespace RoleBasedDemo.Services {
         }
 
 
+
+
         public bool CheckEmailExistence(string email)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings.SQL_Connection))
+                using SqlConnection con = new(_connectionStrings.SQL_Connection);
+
+                if (string.IsNullOrEmpty(email)) // Check if username is null or empty
                 {
-                    con.Open();
-                    string query = "SELECT COUNT(*) FROM UserDetails WHERE Email = @Email";
-                    using (SqlCommand cmd = new SqlCommand(query, con))
-                    {
-                        cmd.Parameters.AddWithValue("@Email", email);
-                        int count = (int)cmd.ExecuteScalar();
-                        return count > 0;
-                    }
+                    return false; // Return false if username is empty
                 }
+                con.Open();
+                string query = "SELECT COUNT(*) FROM UserDetails WHERE Email = @Email";
+                using SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@Email", email);
+                object result = (int)cmd.ExecuteScalar();
+                int count = Convert.ToInt32(result ?? 0);
+                return count > 0;
             }
             catch (Exception ex)
             {

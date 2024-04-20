@@ -2,6 +2,9 @@
     Layout = null;
 }
 
+
+
+
 @model RoleBasedDemo.Models.UserViewModel
 
 <!DOCTYPE html>
@@ -57,9 +60,14 @@
             color: red;
             font-size: 14px;
         }
+
+        .container {
+            padding-top: 40px; /* Adjust this value based on the height of your topbar */
+        }
     </style>
 </head>
 <body>
+    @await Html.PartialAsync("_floattopbar")
     <div class="container">
         <div class="container">
             <div class="form-container">
@@ -159,47 +167,7 @@
                 $('input[name="menu"]:checked').each(function () {
                     menus.push($(this).val());
                 });
-                // $('input[name="submenu"]:checked').each(function () {
-                //     submenus.push($(this).val());
-                // // });
-                // $('input[name="menu"]:checked').each(function () {
-                //     // Get the menu ID
-                //     var menuId = $(this).val();
-                //     // Initialize an object to represent the menu
-                //     var menuObject = {
-                //         menuId: menuId,
-                //         submenuId: [] // Initialize an array for submenu IDs
-                //     };
-                //     // Check if the menu has submenus
-                //     if ($(this).siblings('ul').length > 0) {
-                //         // Loop through checked submenu checkboxes
-                //         $(this).siblings('ul').find('input[name="submenu"]:checked').each(function () {
-                //             // Get the submenu ID
-                //             var submenuId = $(this).val();
-                //             // Push the submenu ID to the submenu array
-                //             menuObject.submenuId.push(submenuId);
-                //         });
-                //     }
-                //     // Push the menu object to the menus array
-                //     menus.push(menuObject);
-                // // });
-                // $('input[name="menu"]:checked').each(function () {
-                //     // Get the menu ID
-                //     var menuId = $(this).val();
-                //     // Check if the menu has submenus
-                //     if ($(this).siblings('ul').length > 0) {
-                //         // Loop through checked submenu checkboxes
-                //         $(this).siblings('ul').find('input[name="submenu"]:checked').each(function () {
-                //             // Get the submenu ID
-                //             var submenuId = $(this).val();
-                //             // Concatenate the menu and submenu IDs and push to the menus array
-                //             menus.push(menuId + ',' + submenuId);
-                //         });
-                //     } else {
-                //         // If the menu has no submenus, push the menu ID with '0' as the submenu ID
-                //         menus.push(menuId + ',0');
-                //     }
-                // });
+  
 
                 // Check if all fields are selected
                 if (!userId) {
@@ -299,39 +267,7 @@
                         // Similarly, populate submenus and other UI elements
 
                          var menuAccessArray = data.menuAccess;
-                       
-                        // // Iterate over each menu-submenu pair
-                        // menuAccessArray.forEach(function (pair) {
-                        //     var parts = pair.split(',');
-                        //     var menuId = parts[0];
-                        //     var submenuId = parts[1];
-
-                        //     // Check the menu checkbox
-                        //     $('input[name="menu"][value="' + menuId + '"]').prop('checked', true);
-
-                        //     // If submenu ID is not 0, check the submenu checkbox
-                        //     if (submenuId !== "0") {
-                        //         $('input[name="submenu"][value="' + submenuId + '"]').prop('checked', true);
-                        //     }
-                        // });var menuAccessArray = data.menuAccess;
-
-                        // Iterate over each menu-submenu pair
-                        // menuAccessArray.forEach(function (pair) {
-                        //     var parts = pair.split(',');
-                        //     var menuId = parts[0];
-                        //     var submenuId = parts[1];
-
-                        //     // Check the menu checkbox
-                        //     $('input[name="menu"][value="' + menuId + '"]').prop('checked', true);
-
-                        //     // If submenu ID is not 0, check the submenu checkbox
-                        //     if (submenuId !== "0") {
-                        //         // Check if the submenu exists for the given menu ID
-                        //         if ($('input[name="submenu"][value="' + submenuId + '"]').length > 0) {
-                        //             $('input[name="submenu"][value="' + submenuId + '"]').prop('checked', true);
-                        //         }
-                        //     }
-                        // });
+         
                         $('input[name="menu"]').prop('checked', false);
                         $('input[name="submenu"]').prop('checked', false);
 

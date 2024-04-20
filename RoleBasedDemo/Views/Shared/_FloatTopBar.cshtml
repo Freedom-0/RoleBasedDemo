@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Topbar</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+       
+        .containerzz {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+           
+
+        }
+
+        /* Topbar styles */
+        .topbar {
+            position: fixed;
+            top: 0;
+            background-color: #fff;
+            padding: 10px;
+            padding-left: 20px; /* 10px padding + 10px space */
+            padding-right: 20px; /* 10px padding + 10px space */
+            width: calc(100% - 40px); /* Subtract the padding space */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid green;
+            border-radius: 5px;
+        }
+
+        /* Content styles */
+        .content {
+            margin-top: 30px; /* Ensure content starts below the topbar */
+            width: 100%;
+        }
+
+        /* Links inside topbar */
+        .topbar a {
+            color: black;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Container for topbar and content -->
+    <div class="containerzz mb-2">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="left-side">
+                <a href="@Url.Action("Index", "Home")" class="active">Home</a>
+
+
+                <a href="@Url.Action("Privacy", "Home")" class="active">Privacy</a>
+
+
+            </div>
+            <div class="right-side">
+                <div class="dropdown">
+
+               
+
+
+                       
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                             <a>Hi 👋 @User.Identity.GetUserName()</a>
+                               <a class="btn  no-arrow" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                   <i class="fa-regular fa-address-card"></i>
+                               </a>
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                  <a class="dropdown-item" href="#">Role: @User.Identity.GetUserROle()</a>
+                                  <a class="dropdown-item" href="#">Branch: @User.Identity.GetUserLocation()</a>
+                                  <div class="dropdown-divider"></div>
+                                   <a class="dropdown-item" asp-controller="Account" asp-action="Logout">  <i class="fas fa-user"></i>  Logout</a>
+                              </ul>
+                        }
+                     
+                   
+                </div>
+            </div>
+        </div>
+      
+    </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -3,6 +3,8 @@
 @{
     Layout = null;
 }
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,14 +21,18 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding-top: 40px;
         }
 
+ 
+        
         .container {
             max-width: 400px;
             padding: 20px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+           
         }
 
         .form-group {
@@ -57,6 +63,7 @@
     </style>
 </head>
 <body>
+   
     <div class="container">
         <h2>Registration</h2>
         @if (TempData["RegistrationStatus"] != null)
@@ -86,10 +93,10 @@
         }
 
 
-
+        @await Html.PartialAsync("_floattopbar")
         @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @id = "registrationForm" }))
         {
-            <div class="form-group">
+            <div class="form-group topzz">
                 <label for="Username">Username:</label>
                 <input type="text" id="Username" name="Username" class="form-control" asp-for="Username" required autocomplete="off">
                 <div class="invalid-feedback">Username is required.</div>
@@ -272,6 +279,7 @@
                         document.getElementById('usernameError').textContent = 'Username already exists. Please choose another.';
                     } else {
                         document.getElementById('usernameError').textContent = '';
+                        //document.getElementById("registrationForm").submit();
                     }
                 }
             };
@@ -290,6 +298,7 @@
                         document.getElementById('emailError').textContent = 'Email already exists. Please use a different email address.';
                     } else {
                         document.getElementById('emailError').textContent = '';
+                        //document.getElementById("registrationForm").submit();
                     }
                 }
             };

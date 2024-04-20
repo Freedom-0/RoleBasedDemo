@@ -1,15 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 //using RoleBasedDemo.Authorization;
 using RoleBasedDemo.Helpers;
 using RoleBasedDemo.Middleware;
-using RoleBasedDemo.Services;
-using System;
+
 
 
 

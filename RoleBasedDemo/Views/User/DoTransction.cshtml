@@ -1,5 +1,5 @@
 ﻿@{
-    //Layout = null;
+    Layout = null;
     var role = @Model.ROLE;
 }
 @model RoleBasedDemo.Models.UserViewModel
@@ -9,7 +9,14 @@
 
 @if (role == "Maker")
 {
+
+    <link href="~/custom/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/custom/css/bootstrap.css" rel="stylesheet" />
+
     <div class="container">
+        <!--partial page-->
+        @await Html.PartialAsync("_floattopbar")
+        <!--end of partail page-->
         <div class="container">
             <div class="form-container">
                 <h2 class="mb-4">DO TRANSCTION</h2>
@@ -130,13 +137,15 @@ else if (role == "Checker")
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Transaction Table</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Include select2 CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
         <style>
-            <!-- Include Bootstrap CSS -->
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" >
-            <!-- Include select2 CSS -->
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" >
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" >
 
+            .container{
+                padding-top: 40px;
+            }
 
             #transactionTable {
                 width: 100%;
@@ -174,9 +183,15 @@ else if (role == "Checker")
         </style>
     </head>
     <body>
-        <p>UserName:  <input asp-for="Approver" class="form-control" value="@Model.Name" readonly /></p>
-        <table id="transactionTable">
-            <thead id="nodata">
+
+        <div class="container">
+            <!--partial page-->
+            @await Html.PartialAsync("_floattopbar")
+            <!--end of partail page-->
+            <div class="container">
+               <p>UserName:  <input asp-for="Approver" class="form-control" value="@Model.Name" readonly /></p>
+               <table id="transactionTable">
+                <thead id="nodata">
                 <tr>
                     <th>TID</th>
                     <th>Amount</th>
@@ -191,14 +206,22 @@ else if (role == "Checker")
                 </tr>
             </thead>
 
-            <span id="warning" style="color: red; display: none;">There is no pending data... </span>
-            <tbody id="transactionBody">
+                <span id="warning" style="color: red; display: none;">There is no pending data... </span>
+                <tbody id="transactionBody">
                 <!-- Transaction data will be dynamically added here -->
-            </tbody>
-        </table>
+                </tbody>
+               </table>
+           </div>
+        </div>
 
         <!-- Include jQuery -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/brands.min.js" integrity="sha512-ojD9xRtdGdJLd9K/vMhV6GyO8G9wVrofDXmX4AjrKPctyKTLaVVwuAJhZanincPnSprZv1Nc3iDpxIi/6+Xv7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!-- Include Bootstrap JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <!-- Include select2 JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
         <script>
 
             function fetchTransactions() {
@@ -269,27 +292,16 @@ else if (role == "Checker")
             $(document).ready(function () {
                 fetchTransactions();
 
-                // $(document).on('click', '.btnAction', function () {
-                //     var action = $(this).data('action');
-                //     var data = {
-                //         tid: $(this).data('tid'),
-                //         tusername: $(this).data('tusername'),
-                //         taccountno: $(this).data('taccountno'),
-                //         approver: $(this).data('approver')
-                //     };
-                //     handleTransaction(action, data);
-                // });
-
-                $(document).on('click', '.btnAction', function () {
-                    var action = $(this).data('action'); // Get the action from data attribute
-                    var data = {
-                        tid: $(this).data('tid'),
-                        tusername: $(this).data('tusername'),
-                        taccountno: $(this).data('taccountno'),
-                        approver: $(this).data('approver')
-                    };
-                    handleTransaction(action, data); // Pass action along with other data to handleTransaction function
-                });
+                  $(document).on('click', '.btnAction', function () {
+                var action = $(this).data('action'); // Get the action from data attribute
+                var data = {
+                    tid: $(this).data('tid'),
+                    tusername: $(this).data('tusername'),
+                    taccountno: $(this).data('taccountno'),
+                    approver: $(this).data('approver')
+                };
+                handleTransaction(action, data); // Pass action along with other data to handleTransaction function
+            });
             });
 
             // Function to handle transaction action (accept or reject) via AJAX
@@ -314,12 +326,6 @@ else if (role == "Checker")
                     }
                 });
             }
-
-            // Event listener for handling transaction action
-         
-
-
-
 
         </script>
     </body>
